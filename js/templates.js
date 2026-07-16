@@ -293,64 +293,130 @@ function drawCode(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 5: News (Magazine-style)
+// ШАБЛОН 5: News → Magazine Split (Two-column editorial)
 // ═══════════════════════════════════════════════════════════
 function drawNews(ctx, data) {
-    ctx.fillStyle = '#fafafa';
+    // Background
+    ctx.fillStyle = '#f8fafc';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(0, 0, 8, CANVAS_H);
+    // Left accent panel (40% width)
+    const panelW = CANVAS_W * 0.4;
+    const panelGrad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+    panelGrad.addColorStop(0, '#ef4444');
+    panelGrad.addColorStop(1, '#dc2626');
+    ctx.fillStyle = panelGrad;
+    ctx.fillRect(0, 0, panelW, CANVAS_H);
     
-    ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 18px Inter, sans-serif';
-    ctx.fillText('FEATURED', 60, 80);
+    // "NEWS" label on panel
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillText('NEWS', 50, 50);
     
+    // Emoji or initial centered on panel
+    const emojiX = panelW / 2;
+    const emojiY = CANVAS_H / 2 - 40;
+    if (data.emoji) {
+        if (isEmojiSupported(ctx, data.emoji, 120)) {
+            ctx.font = '120px "Noto Color Emoji", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.emoji, emojiX, emojiY);
+            ctx.textAlign = 'left';
+        } else {
+            drawFallbackIcon(ctx, data.emoji, emojiX - 60, emojiY - 60, 120, 'rgba(255,255,255,0.3)');
+        }
+    }
+    
+    // Right content area (60% width)
+    const contentX = panelW + 60;
+    const contentW = CANVAS_W - panelW - 100;
+    
+    // Title
     ctx.fillStyle = '#171717';
-    ctx.font = 'bold 60px Inter, sans-serif';
-    wrapText(ctx, data.title || 'Title', 60, 150, 1080, 74);
+    ctx.font = 'bold 52px Inter, sans-serif';
+    wrapText(ctx, data.title || 'Title', contentX, 160, contentW, 64);
     
+    // Description
     ctx.fillStyle = '#525252';
-    ctx.font = '28px Inter, sans-serif';
-    wrapText(ctx, data.description || '', 60, 380, 1080, 40);
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, data.description || '', contentX, 300, contentW, 38);
     
+    // Author + date
     ctx.fillStyle = '#a3a3a3';
-    ctx.font = '20px Inter, sans-serif';
+    ctx.font = '18px Inter, sans-serif';
     const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    ctx.fillText(`${data.author || ''} · ${date}`, 60, 560);
+    ctx.fillText(`${data.author || ''} · ${date}`, contentX, 560);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 6: Product (SaaS / Feature announcement)
+// ШАБЛОН 6: Product → 3D Floating Card (Stripe-style)
 // ═══════════════════════════════════════════════════════════
 function drawProduct(ctx, data) {
-    ctx.fillStyle = '#0f172a';
+    // Dark gradient background
+    const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
+    bg.addColorStop(0, '#0f172a');
+    bg.addColorStop(1, '#1e293b');
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    ctx.strokeStyle = 'rgba(99,102,241,0.1)';
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(99,102,241,0.06)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < CANVAS_W; x += 60) {
+    for (let x = 0; x < CANVAS_W; x += 80) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
     }
-    for (let y = 0; y < CANVAS_H; y += 60) {
+    for (let y = 0; y < CANVAS_H; y += 80) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
     }
     
+    // Floating glass card
+    ctx.save();
+    ctx.shadowColor = 'rgba(99,102,241,0.2)';
+    ctx.shadowBlur = 60;
+    ctx.shadowOffsetY = 20;
+    ctx.fillStyle = 'rgba(30,41,59,0.8)';
+    roundRectPath(ctx, 100, 80, CANVAS_W - 200, CANVAS_H - 160, 20);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = 'rgba(99,102,241,0.3)';
+    ctx.lineWidth = 1.5;
+    roundRectPath(ctx, 100, 80, CANVAS_W - 200, CANVAS_H - 160, 20);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Content inside card
+    const cx = 160;
+    const cy = 140;
+    
+    // Glowing "NEW" badge
+    ctx.save();
+    ctx.shadowColor = '#6366f1';
+    ctx.shadowBlur = 15;
     ctx.fillStyle = '#6366f1';
-    ctx.font = 'bold 16px Inter, sans-serif';
-    ctx.fillText('NEW FEATURE', 80, 90);
+    roundRectPath(ctx, cx, cy, 100, 32, 16);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.restore();
     
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 68px Inter, sans-serif';
-    wrapText(ctx, data.title || 'Feature Name', 80, 160, 1040, 82);
+    ctx.font = 'bold 13px Inter, sans-serif';
+    ctx.fillText('NEW', cx + 35, cy + 22);
     
+    // Title
+    drawGlowText(ctx, data.title || 'Feature Name', cx, cy + 100, 'bold 56px Inter, sans-serif', '#ffffff', 'rgba(0,0,0,0.3)', 15);
+    
+    // Description
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '30px Inter, sans-serif';
-    wrapText(ctx, data.description || '', 80, 340, 1040, 42);
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, data.description || '', cx, cy + 180, CANVAS_W - 320, 38);
     
+    // Author
     ctx.fillStyle = '#64748b';
-    ctx.font = '24px Inter, sans-serif';
-    ctx.fillText(data.author || '', 80, 560);
+    ctx.font = '20px Inter, sans-serif';
+    ctx.fillText(data.author || '', cx, CANVAS_H - 140);
+    
+    // Corner orb
+    drawGlowOrb(ctx, CANVAS_W - 150, CANVAS_H - 150, 60, 'rgba(99,102,241,0.15)', 40);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -381,40 +447,68 @@ function drawPhoto(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 8: Brand (Logo center + tagline)
+// ШАБЛОН 8: Brand → Circular Hero (Radial gradient + glass)
 // ═══════════════════════════════════════════════════════════
 function drawBrand(ctx, data) {
-    ctx.fillStyle = '#ffffff';
+    // Soft radial gradient background
+    const bgGrad = ctx.createRadialGradient(CANVAS_W/2, CANVAS_H/2, 100, CANVAS_W/2, CANVAS_H/2, 700);
+    bgGrad.addColorStop(0, '#f0f9ff');
+    bgGrad.addColorStop(0.5, '#e0f2fe');
+    bgGrad.addColorStop(1, '#f8fafc');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
+    // Central circle with gradient behind emoji
+    const circleGrad = ctx.createRadialGradient(CANVAS_W/2, 230, 0, CANVAS_W/2, 230, 130);
+    circleGrad.addColorStop(0, 'rgba(99,102,241,0.15)');
+    circleGrad.addColorStop(1, 'rgba(99,102,241,0)');
+    ctx.fillStyle = circleGrad;
     ctx.beginPath();
-    ctx.arc(CANVAS_W / 2, 220, 80, 0, Math.PI * 2);
-    ctx.fillStyle = '#f5f5f5';
+    ctx.arc(CANVAS_W / 2, 230, 130, 0, Math.PI * 2);
     ctx.fill();
     
+    // Emoji or initial centered
     if (data.emoji) {
-        if (isEmojiSupported(ctx, data.emoji, 80)) {
-            ctx.font = '80px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", serif';
+        if (isEmojiSupported(ctx, data.emoji, 100)) {
+            ctx.font = '100px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", serif';
             ctx.textAlign = 'center';
-            ctx.fillText(data.emoji, CANVAS_W / 2, 245);
+            ctx.fillText(data.emoji, CANVAS_W / 2, 260);
             ctx.textAlign = 'left';
         } else {
-            drawFallbackIcon(ctx, data.emoji, CANVAS_W/2 - 40, 180, 80, '#171717');
+            drawFallbackIcon(ctx, data.emoji, CANVAS_W/2 - 50, 210, 100, '#6366f1');
         }
     }
     
+    // Glass card for text
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.08)';
+    ctx.shadowBlur = 32;
+    ctx.shadowOffsetY = 8;
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    roundRectPath(ctx, 260, 330, CANVAS_W - 520, 220, 16);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    roundRectPath(ctx, 260, 330, CANVAS_W - 520, 220, 16);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Title centered
     ctx.fillStyle = '#171717';
-    ctx.font = 'bold 56px Inter, sans-serif';
+    ctx.font = 'bold 48px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(data.title || 'Brand Name', CANVAS_W / 2, 380);
+    ctx.fillText(data.title || 'Brand Name', CANVAS_W / 2, 400);
     
+    // Description (tagline)
     ctx.fillStyle = '#525252';
-    ctx.font = '28px Inter, sans-serif';
-    ctx.fillText(data.description || '', CANVAS_W / 2, 440);
+    ctx.font = '24px Inter, sans-serif';
+    ctx.fillText(data.description || '', CANVAS_W / 2, 450);
     
+    // Author
     ctx.fillStyle = '#a3a3a3';
-    ctx.font = '20px Inter, sans-serif';
-    ctx.fillText(data.author || '', CANVAS_W / 2, 520);
+    ctx.font = '18px Inter, sans-serif';
+    ctx.fillText(data.author || '', CANVAS_W / 2, 500);
     
     ctx.textAlign = 'left';
 }
