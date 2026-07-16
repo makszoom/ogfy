@@ -17,7 +17,10 @@
         freeCount: document.getElementById('free-count'),
         paywall: document.getElementById('paywall'),
         generatorLayout: document.getElementById('generator-layout'),
-        counter: document.getElementById('counter')
+        counter: document.getElementById('counter'),
+        burgerBtn: document.getElementById('burger-btn'),
+        mobileNav: document.getElementById('mobile-nav'),
+        mobileNavClose: document.getElementById('mobile-nav-close')
     };
     
     // Состояние
@@ -62,6 +65,47 @@
         }
         return 'minimal';
     }
+    
+    // === МОБИЛЬНОЕ МЕНЮ ===
+    function toggleMobileNav() {
+        const isOpen = els.mobileNav.classList.contains('open');
+        if (isOpen) {
+            els.mobileNav.classList.remove('open');
+            document.body.style.overflow = '';
+        } else {
+            els.mobileNav.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    function closeMobileNav() {
+        els.mobileNav.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    
+    if (els.burgerBtn) {
+        els.burgerBtn.addEventListener('click', toggleMobileNav);
+    }
+    if (els.mobileNavClose) {
+        els.mobileNavClose.addEventListener('click', closeMobileNav);
+    }
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMobileNav();
+    });
+    
+    // Закрытие по клику вне шторки
+    if (els.mobileNav) {
+        els.mobileNav.addEventListener('click', (e) => {
+            if (e.target === els.mobileNav) closeMobileNav();
+        });
+    }
+    
+    // Закрытие при клике на ссылку в шторке
+    els.mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMobileNav);
+    });
     
     // === РЕНДЕР (без траты лимита) ===
     async function renderPreview() {
