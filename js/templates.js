@@ -90,8 +90,21 @@ function drawGlowText(ctx, text, x, y, font, color, glowColor, glowBlur) {
     ctx.restore();
 }
 
+// Noise overlay (текстурный шум) — для Dark шаблона
+function drawNoiseOverlay(ctx, w, h, opacity) {
+    ctx.save();
+    ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+    for (let i = 0; i < 4000; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const size = Math.random() * 1.5;
+        ctx.fillRect(x, y, size, size);
+    }
+    ctx.restore();
+}
+
 // ═══════════════════════════════════════════════════════════
-// BACKGROUND HELPERS (новые)
+// BACKGROUND HELPERS
 // ═══════════════════════════════════════════════════════════
 
 // Определяем, тёмный ли цвет (по яркости)
@@ -469,28 +482,30 @@ function drawPhoto(ctx, data) {
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     }
     
+    // Cinematic letterbox bars only — no dark overlay hiding the photo
     const barH = 90;
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, CANVAS_W, barH);
     ctx.fillRect(0, CANVAS_H - barH, CANVAS_W, barH);
     
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fillRect(0, barH, CANVAS_W, CANVAS_H - barH * 2);
-    
+    // Top bar text
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '14px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('OGFY STUDIO', CANVAS_W / 2, 55);
     ctx.textAlign = 'left';
     
+    // Title
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 56px Inter, sans-serif';
     wrapText(ctx, data.title || 'Title', 80, 220, 1040, 68);
     
+    // Description
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '28px Inter, sans-serif';
     wrapText(ctx, data.description || '', 80, 360, 1040, 40);
     
+    // Bottom bar text
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '16px Inter, sans-serif';
     ctx.fillText(data.author || '', 80, CANVAS_H - 45);
