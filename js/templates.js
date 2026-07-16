@@ -491,21 +491,52 @@ function drawBrand(ctx, data) {
     ctx.stroke();
     ctx.restore();
     
-    // Title centered with wrap
+    // Title centered — single line, ellipsis if too long
     ctx.fillStyle = '#171717';
-    ctx.font = 'bold 48px Inter, sans-serif';
+    ctx.font = 'bold 40px Inter, sans-serif';
     ctx.textAlign = 'center';
-    wrapText(ctx, data.title || 'Brand Name', CANVAS_W / 2, 400, CANVAS_W - 560, 58);
+    const titleText = (data.title || 'Brand Name');
+    const maxTitleWidth = CANVAS_W - 600;
+    let displayTitle = titleText;
+    if (ctx.measureText(titleText).width > maxTitleWidth) {
+        // Truncate with ellipsis
+        let truncated = titleText;
+        while (ctx.measureText(truncated + '...').width > maxTitleWidth && truncated.length > 0) {
+            truncated = truncated.slice(0, -1);
+        }
+        displayTitle = truncated + '...';
+    }
+    ctx.fillText(displayTitle, CANVAS_W / 2, 390);
     
-    // Description (tagline) with wrap
+    // Description (tagline) — single line
     ctx.fillStyle = '#525252';
-    ctx.font = '24px Inter, sans-serif';
-    wrapText(ctx, data.description || '', CANVAS_W / 2, 460, CANVAS_W - 560, 34);
+    ctx.font = '22px Inter, sans-serif';
+    const descText = (data.description || '');
+    const maxDescWidth = CANVAS_W - 600;
+    let displayDesc = descText;
+    if (ctx.measureText(descText).width > maxDescWidth) {
+        let truncated = descText;
+        while (ctx.measureText(truncated + '...').width > maxDescWidth && truncated.length > 0) {
+            truncated = truncated.slice(0, -1);
+        }
+        displayDesc = truncated + '...';
+    }
+    ctx.fillText(displayDesc, CANVAS_W / 2, 440);
     
-    // Author
+    // Author — single line
     ctx.fillStyle = '#a3a3a3';
-    ctx.font = '18px Inter, sans-serif';
-    wrapText(ctx, data.author || '', CANVAS_W / 2, 510, CANVAS_W - 560, 24);
+    ctx.font = '16px Inter, sans-serif';
+    const authorText = (data.author || '');
+    const maxAuthorWidth = CANVAS_W - 600;
+    let displayAuthor = authorText;
+    if (ctx.measureText(authorText).width > maxAuthorWidth) {
+        let truncated = authorText;
+        while (ctx.measureText(truncated + '...').width > maxAuthorWidth && truncated.length > 0) {
+            truncated = truncated.slice(0, -1);
+        }
+        displayAuthor = truncated + '...';
+    }
+    ctx.fillText(displayAuthor, CANVAS_W / 2, 480);
     
     ctx.textAlign = 'left';
 }
