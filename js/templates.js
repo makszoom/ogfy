@@ -262,34 +262,67 @@ function drawDark(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 4: Code (Terminal-style)
+// ШАБЛОН 4: Code → Matrix Rain (Terminal + falling characters)
 // ═══════════════════════════════════════════════════════════
 function drawCode(ctx, data) {
-    ctx.fillStyle = '#0d1117';
+    // Dark matrix background
+    ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    ctx.fillStyle = '#161b22';
-    ctx.fillRect(0, 0, CANVAS_W, 40);
+    // Matrix rain effect (static — random green chars)
+    const chars = '01アイウエオカキクケコサシスセソタチツテト';
+    ctx.fillStyle = 'rgba(34,197,94,0.15)';
+    ctx.font = '14px monospace';
+    for (let i = 0; i < 80; i++) {
+        const x = Math.random() * CANVAS_W;
+        const y = Math.random() * 300;
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, x, y);
+    }
     
-    const dotColors = ['#ff5f56', '#ffbd2e', '#27c93f'];
+    // Fading rain columns (vertical lines of varying opacity)
+    for (let col = 0; col < 15; col++) {
+        const x = 40 + col * 75;
+        const len = 5 + Math.floor(Math.random() * 12);
+        for (let row = 0; row < len; row++) {
+            const alpha = 0.5 - (row / len) * 0.4;
+            ctx.fillStyle = `rgba(34,197,94,${alpha})`;
+            const char = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(char, x, 30 + row * 18);
+        }
+    }
+    
+    // Terminal header bar
+    ctx.fillStyle = 'rgba(22,27,34,0.9)';
+    ctx.fillRect(60, 320, CANVAS_W - 120, 260);
+    
+    // Terminal top bar
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(60, 320, CANVAS_W - 120, 32);
+    
+    // Dots
+    const dotColors = ['#ef4444', '#f59e0b', '#22c55e'];
     dotColors.forEach((c, i) => {
         ctx.fillStyle = c;
         ctx.beginPath();
-        ctx.arc(30 + i * 24, 20, 8, 0, Math.PI * 2);
+        ctx.arc(80 + i * 20, 336, 6, 0, Math.PI * 2);
         ctx.fill();
     });
     
-    ctx.fillStyle = '#7ee787';
-    ctx.font = 'bold 52px "SF Mono", "Fira Code", monospace';
-    ctx.fillText('// ' + (data.title || 'Title'), 60, 160);
+    // Title as code
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 40px "SF Mono", "Fira Code", monospace';
+    ctx.fillText('$ ' + (data.title || 'build.sh'), 80, 400);
     
-    ctx.fillStyle = '#79c0ff';
-    ctx.font = '32px "SF Mono", "Fira Code", monospace';
-    wrapText(ctx, 'const desc = "' + (data.description || '') + '"', 60, 260, 1080, 44);
-    
-    ctx.fillStyle = '#a371f7';
+    // Description
+    ctx.fillStyle = '#94a3b8';
     ctx.font = '24px "SF Mono", "Fira Code", monospace';
-    ctx.fillText('by ' + (data.author || ''), 60, 560);
+    wrapText(ctx, '> ' + (data.description || 'Running deployment...'), 80, 450, CANVAS_W - 200, 36);
+    
+    // Author
+    ctx.fillStyle = '#64748b';
+    ctx.font = '18px "SF Mono", "Fira Code", monospace';
+    ctx.fillText('# ' + (data.author || 'dev@ogfy.io'), 80, 560);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -417,9 +450,10 @@ function drawProduct(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 7: Photo (Background photo + text overlay)
+// ШАБЛОН 7: Photo → Cinematic (Letterbox + center photo)
 // ═══════════════════════════════════════════════════════════
 function drawPhoto(ctx, data) {
+    // Background
     if (data.bgImage) {
         ctx.drawImage(data.bgImage, 0, 0, CANVAS_W, CANVAS_H);
     } else {
@@ -427,20 +461,42 @@ function drawPhoto(ctx, data) {
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     }
     
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    // Cinematic letterbox bars (top & bottom)
+    const barH = 90;
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, CANVAS_W, barH);
+    ctx.fillRect(0, CANVAS_H - barH, CANVAS_W, barH);
     
+    // Dark overlay for text readability
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.fillRect(0, barH, CANVAS_W, CANVAS_H - barH * 2);
+    
+    // Top bar text
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('OGFY STUDIO', CANVAS_W / 2, 55);
+    ctx.textAlign = 'left';
+    
+    // Title
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 64px Inter, sans-serif';
-    wrapText(ctx, data.title || 'Title', 80, 240, 1040, 78);
+    ctx.font = 'bold 56px Inter, sans-serif';
+    wrapText(ctx, data.title || 'Title', 80, 220, 1040, 68);
     
+    // Description
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = '30px Inter, sans-serif';
-    wrapText(ctx, data.description || '', 80, 400, 1040, 42);
+    ctx.font = '28px Inter, sans-serif';
+    wrapText(ctx, data.description || '', 80, 360, 1040, 40);
     
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '24px Inter, sans-serif';
-    ctx.fillText(data.author || '', 80, 560);
+    // Bottom bar text
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '16px Inter, sans-serif';
+    ctx.fillText(data.author || '', 80, CANVAS_H - 45);
+    
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.textAlign = 'right';
+    ctx.fillText('1200 x 630', CANVAS_W - 80, CANVAS_H - 45);
+    ctx.textAlign = 'left';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -530,54 +586,89 @@ function drawBrand(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 9: Event (Date, time, location)
+// ШАБЛОН 9: Event → Countdown Poster (Mesh gradient + glow)
 // ═══════════════════════════════════════════════════════════
 function drawEvent(ctx, data) {
-    ctx.fillStyle = '#1e1b4b';
+    // Dark mesh background
+    const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
+    bg.addColorStop(0, '#1e1b4b');
+    bg.addColorStop(1, '#312e81');
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    ctx.fillStyle = 'rgba(99,102,241,0.2)';
-    ctx.beginPath(); ctx.arc(1000, 100, 200, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(200, 500, 150, 0, Math.PI*2); ctx.fill();
+    // Decorative orbs
+    drawGlowOrb(ctx, 150, 120, 80, 'rgba(99,102,241,0.2)', 50);
+    drawGlowOrb(ctx, 1050, 520, 100, 'rgba(236,72,153,0.15)', 50);
+    drawGlowOrb(ctx, 600, 580, 60, 'rgba(251,191,36,0.12)', 40);
     
+    // Glow badge "SAVE THE DATE"
+    ctx.save();
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 20;
     ctx.fillStyle = '#fbbf24';
-    ctx.font = 'bold 16px Inter, sans-serif';
-    ctx.fillText('UPCOMING EVENT', 80, 90);
+    roundRectPath(ctx, 80, 70, 160, 36, 18);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.restore();
     
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 60px Inter, sans-serif';
-    wrapText(ctx, data.title || 'Event Name', 80, 160, 1040, 74);
+    ctx.fillStyle = '#1e1b4b';
+    ctx.font = 'bold 13px Inter, sans-serif';
+    ctx.fillText('SAVE THE DATE', 100, 94);
     
+    // Title
+    drawGlowText(ctx, data.title || 'Event Name', 80, 160, 'bold 60px Inter, sans-serif', '#ffffff', 'rgba(0,0,0,0.3)', 15);
+    
+    // Date / Description (cyan glow)
     ctx.fillStyle = '#c7d2fe';
     ctx.font = '32px Inter, sans-serif';
-    wrapText(ctx, data.description || 'Date & Location', 80, 340, 1040, 44);
+    wrapText(ctx, data.description || 'Date & Location', 80, 280, 1040, 44);
     
+    // Large decorative date number
+    ctx.fillStyle = 'rgba(99,102,241,0.08)';
+    ctx.font = 'bold 200px Inter, sans-serif';
+    const dateNum = new Date().getDate().toString().padStart(2, '0');
+    ctx.fillText(dateNum, CANVAS_W - 280, 540);
+    
+    // Author
     ctx.fillStyle = '#818cf8';
     ctx.font = '24px Inter, sans-serif';
     ctx.fillText(data.author || '', 80, 560);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 10: Quote (Large quote + author)
+// ШАБЛОН 10: Quote → Editorial (Large typography + accent)
 // ═══════════════════════════════════════════════════════════
 function drawQuote(ctx, data) {
-    ctx.fillStyle = '#fafafa';
+    // Warm editorial background
+    ctx.fillStyle = '#fefce8';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    ctx.fillStyle = '#e5e5e5';
-    ctx.font = 'bold 200px Georgia, serif';
-    ctx.fillText('"', 60, 220);
+    // Large accent bar on left
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(60, 80, 8, CANVAS_H - 160);
     
-    ctx.fillStyle = '#171717';
-    ctx.font = 'italic 52px Georgia, serif';
-    wrapText(ctx, data.title || 'Quote text here', 80, 280, 1040, 68);
+    // Small accent square
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(60, 80, 40, 40);
     
-    ctx.fillStyle = '#525252';
+    // Quote mark inside square
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 28px Georgia, serif';
+    ctx.fillText('"', 72, 110);
+    
+    // Title (quote text) — large editorial style
+    ctx.fillStyle = '#1c1917';
+    ctx.font = 'italic 48px Georgia, serif';
+    const quoteY = wrapText(ctx, data.title || 'Quote text here', 140, 200, CANVAS_W - 260, 64);
+    
+    // Author with em-dash
+    ctx.fillStyle = '#78716c';
     ctx.font = '28px Inter, sans-serif';
-    ctx.fillText('— ' + (data.author || 'Author'), 80, 520);
+    ctx.fillText('— ' + (data.author || 'Author'), 140, quoteY + 60);
     
-    ctx.fillStyle = '#171717';
-    ctx.fillRect(80, 560, 60, 4);
+    // Decorative bottom line
+    ctx.fillStyle = '#d6d3d1';
+    ctx.fillRect(140, CANVAS_H - 100, 200, 2);
 }
 
 // ═══════════════════════════════════════════════════════════
