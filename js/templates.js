@@ -491,52 +491,40 @@ function drawBrand(ctx, data) {
     ctx.stroke();
     ctx.restore();
     
-    // Title centered — single line, ellipsis if too long
+    // Title centered — dynamic font sizing to fit one line
     ctx.fillStyle = '#171717';
-    ctx.font = 'bold 40px Inter, sans-serif';
     ctx.textAlign = 'center';
     const titleText = (data.title || 'Brand Name');
-    const maxTitleWidth = CANVAS_W - 600;
-    let displayTitle = titleText;
-    if (ctx.measureText(titleText).width > maxTitleWidth) {
-        // Truncate with ellipsis
-        let truncated = titleText;
-        while (ctx.measureText(truncated + '...').width > maxTitleWidth && truncated.length > 0) {
-            truncated = truncated.slice(0, -1);
-        }
-        displayTitle = truncated + '...';
+    const maxTextWidth = CANVAS_W - 560;
+    let titleSize = 48;
+    while (titleSize >= 28) {
+        ctx.font = `bold ${titleSize}px Inter, sans-serif`;
+        if (ctx.measureText(titleText).width <= maxTextWidth) break;
+        titleSize -= 2;
     }
-    ctx.fillText(displayTitle, CANVAS_W / 2, 390);
+    ctx.fillText(titleText, CANVAS_W / 2, 390);
     
-    // Description (tagline) — single line
+    // Description (tagline) — dynamic sizing
     ctx.fillStyle = '#525252';
-    ctx.font = '22px Inter, sans-serif';
+    let descSize = 24;
     const descText = (data.description || '');
-    const maxDescWidth = CANVAS_W - 600;
-    let displayDesc = descText;
-    if (ctx.measureText(descText).width > maxDescWidth) {
-        let truncated = descText;
-        while (ctx.measureText(truncated + '...').width > maxDescWidth && truncated.length > 0) {
-            truncated = truncated.slice(0, -1);
-        }
-        displayDesc = truncated + '...';
+    while (descSize >= 16) {
+        ctx.font = `${descSize}px Inter, sans-serif`;
+        if (ctx.measureText(descText).width <= maxTextWidth) break;
+        descSize -= 2;
     }
-    ctx.fillText(displayDesc, CANVAS_W / 2, 440);
+    ctx.fillText(descText, CANVAS_W / 2, 440);
     
-    // Author — single line
+    // Author — dynamic sizing
     ctx.fillStyle = '#a3a3a3';
-    ctx.font = '16px Inter, sans-serif';
+    let authorSize = 18;
     const authorText = (data.author || '');
-    const maxAuthorWidth = CANVAS_W - 600;
-    let displayAuthor = authorText;
-    if (ctx.measureText(authorText).width > maxAuthorWidth) {
-        let truncated = authorText;
-        while (ctx.measureText(truncated + '...').width > maxAuthorWidth && truncated.length > 0) {
-            truncated = truncated.slice(0, -1);
-        }
-        displayAuthor = truncated + '...';
+    while (authorSize >= 14) {
+        ctx.font = `${authorSize}px Inter, sans-serif`;
+        if (ctx.measureText(authorText).width <= maxTextWidth) break;
+        authorSize -= 2;
     }
-    ctx.fillText(displayAuthor, CANVAS_W / 2, 480);
+    ctx.fillText(authorText, CANVAS_W / 2, 480);
     
     ctx.textAlign = 'left';
 }
