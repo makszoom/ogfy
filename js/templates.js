@@ -104,19 +104,16 @@ function drawNoiseOverlay(ctx, w, h, opacity) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// BACKGROUND HELPERS
+// BACKGROUND HELPERS — используются в Minimal/Brand/Quote/News/Photo
 // ═══════════════════════════════════════════════════════════
 
-// Определяем, тёмный ли цвет (по яркости)
 function isDarkColor(hex) {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
-    // Luminance: 0.299*R + 0.587*G + 0.114*B
     return (0.299 * r + 0.587 * g + 0.114 * b) < 128;
 }
 
-// Осветляем/затемняем цвет (percent: +20 светлее, -20 темнее)
 function shadeColor(hex, percent) {
     let R = parseInt(hex.substring(1, 3), 16);
     let G = parseInt(hex.substring(3, 5), 16);
@@ -133,33 +130,24 @@ function shadeColor(hex, percent) {
     return '#' + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
 }
 
-// Единый фон: сначала bgColor, потом bgImage если есть
-function drawBackground(ctx, data) {
-    const baseColor = data.bgColor || '#ffffff';
-    
-    // 1. Заливаем базовый цвет
-    ctx.fillStyle = baseColor;
-    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-    
-    // 2. Если есть фоновая картинка — рисуем поверх с opacity 0.3
-    if (data.bgImage) {
-        ctx.globalAlpha = 0.3;
-        ctx.drawImage(data.bgImage, 0, 0, CANVAS_W, CANVAS_H);
-        ctx.globalAlpha = 1.0;
-    }
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 1: Minimal → Glass (Glassmorphism)
+// ШАБЛОН 1: Minimal → Glass (bgColor РАБОТАЕТ)
 // ═══════════════════════════════════════════════════════════
 function drawMinimal(ctx, data) {
-    drawBackground(ctx, data);
+    // Background
+    ctx.fillStyle = data.bgColor || '#cbd5e1';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Orbs в цвет bgColor
-    const baseColor = data.bgColor || '#ffffff';
-    const isDark = isDarkColor(baseColor);
+    // Orbs
+    const isDark = isDarkColor(data.bgColor || '#cbd5e1');
     const orbColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.12)';
-    
     drawGlowOrb(ctx, 180, 160, 100, orbColor, 60);
     drawGlowOrb(ctx, 1020, 460, 120, orbColor, 60);
     
@@ -208,71 +196,53 @@ function drawMinimal(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 2: Gradient → Mesh
+// ШАБЛОН 2: Gradient → Mesh (ФИКСИРОВАННЫЙ)
 // ═══════════════════════════════════════════════════════════
 function drawGradient(ctx, data) {
-    const baseColor = data.bgColor || '#0f0a1a';
-    const isDark = isDarkColor(baseColor);
-    
-    // Base color
-    ctx.fillStyle = baseColor;
+    ctx.fillStyle = '#0f0a1a';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Mesh оттенки — светлее/темнее от baseColor
-    const c1 = shadeColor(baseColor, 30);
-    const c2 = shadeColor(baseColor, -20);
-    const c3 = shadeColor(baseColor, 10);
-    
     const g1 = ctx.createRadialGradient(300, 200, 0, 300, 200, 600);
-    g1.addColorStop(0, hexToRgba(c1, 0.6));
-    g1.addColorStop(1, 'rgba(0,0,0,0)');
+    g1.addColorStop(0, 'rgba(99,102,241,0.6)');
+    g1.addColorStop(1, 'rgba(99,102,241,0)');
     ctx.fillStyle = g1;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
     const g2 = ctx.createRadialGradient(900, 400, 0, 900, 400, 500);
-    g2.addColorStop(0, hexToRgba(c2, 0.5));
-    g2.addColorStop(1, 'rgba(0,0,0,0)');
+    g2.addColorStop(0, 'rgba(236,72,153,0.5)');
+    g2.addColorStop(1, 'rgba(236,72,153,0)');
     ctx.fillStyle = g2;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
     const g3 = ctx.createRadialGradient(600, 550, 0, 600, 550, 400);
-    g3.addColorStop(0, hexToRgba(c3, 0.4));
-    g3.addColorStop(1, 'rgba(0,0,0,0)');
+    g3.addColorStop(0, 'rgba(139,92,246,0.4)');
+    g3.addColorStop(1, 'rgba(139,92,246,0)');
     ctx.fillStyle = g3;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Orbs
-    drawGlowOrb(ctx, 180, 150, 40, hexToRgba(c1, 0.3), 60);
-    drawGlowOrb(ctx, 1020, 480, 50, hexToRgba(c2, 0.25), 60);
+    drawGlowOrb(ctx, 180, 150, 40, 'rgba(99,102,241,0.3)', 60);
+    drawGlowOrb(ctx, 1020, 480, 50, 'rgba(236,72,153,0.25)', 60);
     
-    // Text
-    const textColor = isDark ? '#ffffff' : '#171717';
-    const descColor = isDark ? 'rgba(255,255,255,0.85)' : '#525252';
-    const authColor = isDark ? 'rgba(255,255,255,0.6)' : '#a3a3a3';
+    drawGlowText(ctx, data.title || 'Title', 80, 240, 'bold 64px Inter, sans-serif', '#ffffff', 'rgba(0,0,0,0.3)', 20);
     
-    drawGlowText(ctx, data.title || 'Title', 80, 240, 'bold 64px Inter, sans-serif', textColor, 'rgba(0,0,0,0.3)', 20);
-    
-    ctx.fillStyle = descColor;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '32px Inter, sans-serif';
     wrapText(ctx, data.description || '', 80, 340, 1040, 44);
     
-    ctx.fillStyle = authColor;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '24px Inter, sans-serif';
     ctx.fillText(data.author || '', 80, 560);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 3: Dark → Neon
+// ШАБЛОН 3: Dark → Neon (ФИКСИРОВАННЫЙ)
 // ═══════════════════════════════════════════════════════════
 function drawDark(ctx, data) {
-    const baseColor = data.bgColor || '#0a0a0a';
-    ctx.fillStyle = baseColor;
+    ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Noise
     drawNoiseOverlay(ctx, CANVAS_W, CANVAS_H, 0.04);
     
-    // Neon line — всегда на фоне, не зависит от bgColor
     ctx.save();
     ctx.shadowColor = '#6366f1';
     ctx.shadowBlur = 20;
@@ -280,7 +250,6 @@ function drawDark(ctx, data) {
     ctx.fillRect(60, 120, 100, 4);
     ctx.restore();
     
-    // Title
     drawGlowText(ctx, data.title || 'Title', 60, 220, 'bold 64px Inter, sans-serif', '#ffffff', 'rgba(99,102,241,0.4)', 30);
     
     ctx.fillStyle = '#a3a3a3';
@@ -293,14 +262,12 @@ function drawDark(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 4: Code → Matrix Rain
+// ШАБЛОН 4: Code → Matrix Rain (ФИКСИРОВАННЫЙ)
 // ═══════════════════════════════════════════════════════════
 function drawCode(ctx, data) {
-    const baseColor = data.bgColor || '#050505';
-    ctx.fillStyle = baseColor;
+    ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Matrix rain
     const chars = '01アイウエオカキクケコサシスセソタチツテト';
     ctx.fillStyle = 'rgba(34,197,94,0.15)';
     ctx.font = '14px monospace';
@@ -322,7 +289,6 @@ function drawCode(ctx, data) {
         }
     }
     
-    // Terminal
     ctx.fillStyle = 'rgba(22,27,34,0.9)';
     ctx.fillRect(60, 320, CANVAS_W - 120, 260);
     ctx.fillStyle = '#1f2937';
@@ -350,14 +316,13 @@ function drawCode(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 5: News → Magazine Split
+// ШАБЛОН 5: News → Magazine Split (bgColor РАБОТАЕТ)
 // ═══════════════════════════════════════════════════════════
 function drawNews(ctx, data) {
     const baseColor = data.bgColor || '#f8fafc';
     ctx.fillStyle = baseColor;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Left panel — оттенок от baseColor
     const panelColor = shadeColor(baseColor, -15);
     const panelW = CANVAS_W * 0.4;
     const panelGrad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
@@ -402,20 +367,16 @@ function drawNews(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 6: Product → 3D Floating Card
+// ШАБЛОН 6: Product → 3D Floating Card (ФИКСИРОВАННЫЙ)
 // ═══════════════════════════════════════════════════════════
 function drawProduct(ctx, data) {
-    const baseColor = data.bgColor || '#0f172a';
-    
-    // Background
     const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
-    bg.addColorStop(0, baseColor);
-    bg.addColorStop(1, shadeColor(baseColor, 10));
+    bg.addColorStop(0, '#0f172a');
+    bg.addColorStop(1, '#1e293b');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Grid
-    ctx.strokeStyle = hexToRgba(shadeColor(baseColor, 40), 0.08);
+    ctx.strokeStyle = 'rgba(99,102,241,0.06)';
     ctx.lineWidth = 1;
     for (let x = 0; x < CANVAS_W; x += 80) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
@@ -424,17 +385,15 @@ function drawProduct(ctx, data) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
     }
     
-    // Glass card
-    const isDark = isDarkColor(baseColor);
     ctx.save();
-    ctx.shadowColor = hexToRgba(shadeColor(baseColor, 50), 0.2);
+    ctx.shadowColor = 'rgba(99,102,241,0.2)';
     ctx.shadowBlur = 60;
     ctx.shadowOffsetY = 20;
-    ctx.fillStyle = isDark ? 'rgba(30,30,30,0.8)' : 'rgba(255,255,255,0.85)';
+    ctx.fillStyle = 'rgba(30,41,59,0.8)';
     roundRectPath(ctx, 100, 80, CANVAS_W - 200, CANVAS_H - 160, 20);
     ctx.fill();
     ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = hexToRgba(shadeColor(baseColor, 50), isDark ? 0.3 : 0.2);
+    ctx.strokeStyle = 'rgba(99,102,241,0.3)';
     ctx.lineWidth = 1.5;
     roundRectPath(ctx, 100, 80, CANVAS_W - 200, CANVAS_H - 160, 20);
     ctx.stroke();
@@ -456,25 +415,21 @@ function drawProduct(ctx, data) {
     ctx.font = 'bold 13px Inter, sans-serif';
     ctx.fillText('NEW', cx + 35, cy + 22);
     
-    const textColor = isDark ? '#f1f5f9' : '#171717';
-    const descColor = isDark ? '#94a3b8' : '#525252';
+    drawGlowText(ctx, data.title || 'Feature Name', cx, cy + 100, 'bold 56px Inter, sans-serif', '#ffffff', 'rgba(0,0,0,0.3)', 15);
     
-    drawGlowText(ctx, data.title || 'Feature Name', cx, cy + 100, 'bold 56px Inter, sans-serif', textColor, 'rgba(0,0,0,0.2)', 15);
-    
-    ctx.fillStyle = descColor;
+    ctx.fillStyle = '#94a3b8';
     ctx.font = '26px Inter, sans-serif';
     wrapText(ctx, data.description || '', cx, cy + 180, CANVAS_W - 320, 38);
     
-    ctx.fillStyle = isDark ? '#64748b' : '#a3a3a3';
+    ctx.fillStyle = '#64748b';
     ctx.font = '20px Inter, sans-serif';
     ctx.fillText(data.author || '', cx, CANVAS_H - 140);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 7: Photo → Cinematic
+// ШАБЛОН 7: Photo → Cinematic (bgColor fallback РАБОТАЕТ)
 // ═══════════════════════════════════════════════════════════
 function drawPhoto(ctx, data) {
-    // Background image or color
     if (data.bgImage) {
         ctx.drawImage(data.bgImage, 0, 0, CANVAS_W, CANVAS_H);
     } else {
@@ -482,30 +437,25 @@ function drawPhoto(ctx, data) {
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     }
     
-    // Cinematic letterbox bars only — no dark overlay hiding the photo
     const barH = 90;
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, CANVAS_W, barH);
     ctx.fillRect(0, CANVAS_H - barH, CANVAS_W, barH);
     
-    // Top bar text
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '14px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('OGFY STUDIO', CANVAS_W / 2, 55);
     ctx.textAlign = 'left';
     
-    // Title
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 56px Inter, sans-serif';
     wrapText(ctx, data.title || 'Title', 80, 220, 1040, 68);
     
-    // Description
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '28px Inter, sans-serif';
     wrapText(ctx, data.description || '', 80, 360, 1040, 40);
     
-    // Bottom bar text
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '16px Inter, sans-serif';
     ctx.fillText(data.author || '', 80, CANVAS_H - 45);
@@ -517,7 +467,7 @@ function drawPhoto(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 8: Brand → Circular Hero
+// ШАБЛОН 8: Brand → Circular Hero (bgColor РАБОТАЕТ)
 // ═══════════════════════════════════════════════════════════
 function drawBrand(ctx, data) {
     const baseColor = data.bgColor || '#f0f9ff';
@@ -546,7 +496,6 @@ function drawBrand(ctx, data) {
         }
     }
     
-    // Glass card
     ctx.save();
     ctx.shadowColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)';
     ctx.shadowBlur = 32;
@@ -603,23 +552,18 @@ function drawBrand(ctx, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 9: Event → Countdown Poster
+// ШАБЛОН 9: Event → Countdown Poster (ФИКСИРОВАННЫЙ)
 // ═══════════════════════════════════════════════════════════
 function drawEvent(ctx, data) {
-    const baseColor = data.bgColor || '#1e1b4b';
-    const isDark = isDarkColor(baseColor);
-    
     const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
-    bg.addColorStop(0, baseColor);
-    bg.addColorStop(1, shadeColor(baseColor, 15));
+    bg.addColorStop(0, '#1e1b4b');
+    bg.addColorStop(1, '#312e81');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Orbs в оттенках baseColor
-    drawGlowOrb(ctx, 150, 120, 80, hexToRgba(shadeColor(baseColor, 30), 0.2), 50);
-    drawGlowOrb(ctx, 1050, 520, 100, hexToRgba(shadeColor(baseColor, -10), 0.15), 50);
+    drawGlowOrb(ctx, 150, 120, 80, 'rgba(99,102,241,0.2)', 50);
+    drawGlowOrb(ctx, 1050, 520, 100, 'rgba(236,72,153,0.15)', 50);
     
-    // Badge
     ctx.save();
     ctx.shadowColor = '#fbbf24';
     ctx.shadowBlur = 20;
@@ -629,29 +573,28 @@ function drawEvent(ctx, data) {
     ctx.shadowColor = 'transparent';
     ctx.restore();
     
-    ctx.fillStyle = isDark ? '#1e1b4b' : '#0f0a1a';
+    ctx.fillStyle = '#1e1b4b';
     ctx.font = 'bold 13px Inter, sans-serif';
     ctx.fillText('SAVE THE DATE', 100, 94);
     
-    drawGlowText(ctx, data.title || 'Event Name', 80, 160, 'bold 60px Inter, sans-serif', isDark ? '#ffffff' : '#171717', 'rgba(0,0,0,0.2)', 15);
+    drawGlowText(ctx, data.title || 'Event Name', 80, 160, 'bold 60px Inter, sans-serif', '#ffffff', 'rgba(0,0,0,0.2)', 15);
     
-    ctx.fillStyle = isDark ? '#c7d2fe' : '#525252';
+    ctx.fillStyle = '#c7d2fe';
     ctx.font = '32px Inter, sans-serif';
     wrapText(ctx, data.description || 'Date & Location', 80, 280, 1040, 44);
     
-    // Decorative date number
-    ctx.fillStyle = hexToRgba(baseColor, 0.08);
+    ctx.fillStyle = 'rgba(99,102,241,0.08)';
     ctx.font = 'bold 200px Inter, sans-serif';
     const dateNum = new Date().getDate().toString().padStart(2, '0');
     ctx.fillText(dateNum, CANVAS_W - 280, 540);
     
-    ctx.fillStyle = isDark ? '#818cf8' : '#6366f1';
+    ctx.fillStyle = '#818cf8';
     ctx.font = '24px Inter, sans-serif';
     ctx.fillText(data.author || '', 80, 560);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ШАБЛОН 10: Quote → Editorial
+// ШАБЛОН 10: Quote → Editorial (bgColor РАБОТАЕТ)
 // ═══════════════════════════════════════════════════════════
 function drawQuote(ctx, data) {
     const baseColor = data.bgColor || '#fefce8';
@@ -661,11 +604,9 @@ function drawQuote(ctx, data) {
     const isDark = isDarkColor(baseColor);
     const accentColor = isDark ? '#fbbf24' : '#f59e0b';
     
-    // Accent bar
     ctx.fillStyle = accentColor;
     ctx.fillRect(60, 80, 8, CANVAS_H - 160);
     
-    // Accent square
     ctx.fillStyle = accentColor;
     ctx.fillRect(60, 80, 40, 40);
     
@@ -684,16 +625,6 @@ function drawQuote(ctx, data) {
     
     ctx.fillStyle = isDark ? '#334155' : '#d6d3d1';
     ctx.fillRect(140, CANVAS_H - 100, 200, 2);
-}
-
-// ═══════════════════════════════════════════════════════════
-// HELPER: hex to rgba
-// ═══════════════════════════════════════════════════════════
-function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
 }
 
 // ═══════════════════════════════════════════════════════════
