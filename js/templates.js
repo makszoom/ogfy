@@ -27,7 +27,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 // Утилита: проверка emoji (не tofu)
 function isEmojiSupported(ctx, emoji, fontSize) {
-    ctx.font = `${fontSize}px serif`;
+    ctx.font = `${fontSize}px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", serif`;
     const metrics = ctx.measureText(emoji);
     return metrics.width > fontSize * 0.5;
 }
@@ -62,7 +62,7 @@ function drawMinimal(ctx, data) {
     // Emoji / Icon
     if (data.emoji) {
         if (isEmojiSupported(ctx, data.emoji, 80)) {
-            ctx.font = '80px serif';
+            ctx.font = '80px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", serif';
             ctx.fillText(data.emoji, 80, 160);
         } else {
             drawFallbackIcon(ctx, data.emoji, 80, 100, 80, '#171717');
@@ -295,7 +295,7 @@ function drawBrand(ctx, data) {
     // Emoji or initial
     if (data.emoji) {
         if (isEmojiSupported(ctx, data.emoji, 80)) {
-            ctx.font = '80px serif';
+            ctx.font = '80px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", serif';
             ctx.textAlign = 'center';
             ctx.fillText(data.emoji, CANVAS_W / 2, 245);
             ctx.textAlign = 'left';
