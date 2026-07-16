@@ -300,11 +300,11 @@ function drawNews(ctx, data) {
     ctx.fillStyle = '#f8fafc';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Left accent panel (40% width)
+    // Left accent panel (40% width) — softer coral gradient
     const panelW = CANVAS_W * 0.4;
     const panelGrad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
-    panelGrad.addColorStop(0, '#ef4444');
-    panelGrad.addColorStop(1, '#dc2626');
+    panelGrad.addColorStop(0, '#fb7185');
+    panelGrad.addColorStop(1, '#e11d48');
     ctx.fillStyle = panelGrad;
     ctx.fillRect(0, 0, panelW, CANVAS_H);
     
@@ -414,9 +414,6 @@ function drawProduct(ctx, data) {
     ctx.fillStyle = '#64748b';
     ctx.font = '20px Inter, sans-serif';
     ctx.fillText(data.author || '', cx, CANVAS_H - 140);
-    
-    // Corner orb
-    drawGlowOrb(ctx, CANVAS_W - 150, CANVAS_H - 150, 60, 'rgba(99,102,241,0.15)', 40);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -494,21 +491,21 @@ function drawBrand(ctx, data) {
     ctx.stroke();
     ctx.restore();
     
-    // Title centered
+    // Title centered with wrap
     ctx.fillStyle = '#171717';
     ctx.font = 'bold 48px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(data.title || 'Brand Name', CANVAS_W / 2, 400);
+    wrapText(ctx, data.title || 'Brand Name', CANVAS_W / 2, 400, CANVAS_W - 560, 58);
     
-    // Description (tagline)
+    // Description (tagline) with wrap
     ctx.fillStyle = '#525252';
     ctx.font = '24px Inter, sans-serif';
-    ctx.fillText(data.description || '', CANVAS_W / 2, 450);
+    wrapText(ctx, data.description || '', CANVAS_W / 2, 460, CANVAS_W - 560, 34);
     
     // Author
     ctx.fillStyle = '#a3a3a3';
     ctx.font = '18px Inter, sans-serif';
-    ctx.fillText(data.author || '', CANVAS_W / 2, 500);
+    wrapText(ctx, data.author || '', CANVAS_W / 2, 510, CANVAS_W - 560, 24);
     
     ctx.textAlign = 'left';
 }
