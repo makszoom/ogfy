@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OGfy — Generate OG Images in 1 Click</title>
+    <meta name="description" content="Free Open Graph image generator. Create professional 1200×630 social media preview images for Twitter, Facebook, LinkedIn. No signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <a href="index.html" class="logo">OGfy</a>
+            <nav class="nav">
+                <a href="og-image-for-blog.html">Blog</a>
+                <a href="og-image-for-twitter.html">Twitter</a>
+                <a href="og-image-for-saas.html">SaaS</a>
+                <a href="og-image-for-linkedin.html">LinkedIn</a>
+                <a href="og-image-for-developers.html">Developers</a>
+            </nav>
+        </header>
+
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Generate OG Images<br>in 1 Click</h1>
+            <p class="subtitle">Professional 1200×630 social media preview images for Twitter, Facebook, LinkedIn. No design skills needed.</p>
+        </section>
+
+        <!-- Main Generator -->
+        <div class="generator-layout" id="generator-layout">
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="My awesome blog post" maxlength="80" value="How to Launch a Micro-SaaS">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="Short description" maxlength="120" value="A step-by-step guide to launching your first micro-SaaS in 30 days">
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">Author / Brand</label>
+                    <input type="text" id="author" placeholder="Your name or brand" maxlength="40" value="OGfy Studio">
+                </div>
+                
+                <div class="form-group">
+                    <label for="emoji">Icon / Emoji</label>
+                    <input type="text" id="emoji" placeholder="🚀 or upload logo" maxlength="2" value="🚀">
+                </div>
+
+                <div class="form-group">
+                    <label>Template</label>
+                    <div class="template-selector">
+                        <label class="template-option">
+                            <input type="radio" name="template" value="minimal" checked>
+                            <span class="template-preview minimal-preview">Minimal</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="gradient">
+                            <span class="template-preview gradient-preview">Gradient</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="dark">
+                            <span class="template-preview dark-preview">Dark</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="code">
+                            <span class="template-preview code-preview">Code</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="news">
+                            <span class="template-preview news-preview">News</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="product">
+                            <span class="template-preview product-preview">Product</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="photo">
+                            <span class="template-preview photo-preview">Photo</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="brand">
+                            <span class="template-preview brand-preview">Brand</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="event">
+                            <span class="template-preview event-preview">Event</span>
+                        </label>
+                        <label class="template-option">
+                            <input type="radio" name="template" value="quote">
+                            <span class="template-preview quote-preview">Quote</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bgColor">Background Color</label>
+                    <input type="color" id="bgColor" value="#ffffff">
+                </div>
+
+                <div class="form-group">
+                    <label for="bgImage">Background Image (optional)</label>
+                    <input type="file" id="bgImage" accept="image/*">
+                </div>
+
+                <button class="btn btn-primary btn-generate" id="generate-btn">Generate OG Image</button>
+                
+                <div class="counter" id="counter">
+                    <span class="counter-text">Free generations: <span id="free-count">5</span>/5 remaining</span>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div class="preview-wrapper">
+                    <canvas id="preview-canvas" width="600" height="315" class="preview-canvas"></canvas>
+                    <div class="preview-hint" id="preview-hint">Click Generate to preview</div>
+                </div>
+                <button class="btn btn-secondary download-btn" id="download-btn" disabled>Download PNG</button>
+            </div>
+        </div>
+
+        <!-- Paywall -->
+        <div class="paywall" id="paywall" style="display:none;">
+            <div class="paywall-content">
+                <h2>🎉 You've used all free generations</h2>
+                <p>Get unlimited OG images with lifetime access.</p>
+                
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <h3>Lifetime Basic</h3>
+                        <div class="price">$5</div>
+                        <ul>
+                            <li>Unlimited generations</li>
+                            <li>All 10 templates</li>
+                            <li>PNG export</li>
+                        </ul>
+                        <a href="https://nowpayments.io/payment/?iid=ogfy-basic-5" class="btn btn-primary" target="_blank">Get Basic</a>
+                    </div>
+                    
+                    <div class="pricing-card featured">
+                        <div class="badge">Popular</div>
+                        <h3>Lifetime Pro</h3>
+                        <div class="price">$8</div>
+                        <ul>
+                            <li>Everything in Basic</li>
+                            <li>Custom colors</li>
+                            <li>Upload your fonts</li>
+                            <li>No watermark</li>
+                        </ul>
+                        <a href="https://nowpayments.io/payment/?iid=ogfy-pro-8" class="btn btn-primary" target="_blank">Get Pro</a>
+                    </div>
+                </div>
+                
+                <p class="paywall-note">One-time payment. No subscription. Pay with crypto (USDT).</p>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <section class="features">
+            <h2>Why OGfy?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant</h3>
+                    <p>Generate professional OG images in seconds. No design skills needed.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <h3>10 Templates</h3>
+                    <p>Minimal, gradient, dark, code, news, product, photo, brand, event, quote.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h3>Perfect Size</h3>
+                    <p>1200×630 pixels — optimal for Twitter, Facebook, LinkedIn, Discord.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3>Lifetime $5</h3>
+                    <p>One-time payment. No subscription. Unlimited forever.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with ❤️ by OGfy Studio · <a href="index.html">Home</a></p>
+            <p class="footer-links">
+                <a href="og-image-for-blog.html">Blog</a>
+                <a href="og-image-for-twitter.html">Twitter</a>
+                <a href="og-image-for-saas.html">SaaS</a>
+                <a href="og-image-for-linkedin.html">LinkedIn</a>
+                <a href="og-image-for-developers.html">Developers</a>
+                <a href="og-image-for-youtube.html">YouTube</a>
+                <a href="og-image-for-events.html">Events</a>
+                <a href="og-image-for-podcast.html">Podcast</a>
+                <a href="og-image-for-instagram.html">Instagram</a>
+                <a href="og-image-for-startups.html">Startups</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="js/templates.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
