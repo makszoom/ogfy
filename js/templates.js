@@ -127,27 +127,35 @@ function drawNoiseOverlay(ctx, w, h, opacity) {
 // ШАБЛОН 1: Minimal → Glass (Glassmorphism)
 // ═══════════════════════════════════════════════════════════
 function drawMinimal(ctx, data) {
-    // Soft gradient background
+    // Richer gradient background — darker for contrast
     const bgGrad = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
-    bgGrad.addColorStop(0, '#f1f5f9');
-    bgGrad.addColorStop(1, '#e2e8f0');
+    bgGrad.addColorStop(0, '#cbd5e1');
+    bgGrad.addColorStop(1, '#94a3b8');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     
-    // Blur orbs on background
-    drawGlowOrb(ctx, 200, 180, 120, 'rgba(99,102,241,0.15)', 80);
-    drawGlowOrb(ctx, 1000, 450, 140, 'rgba(236,72,153,0.12)', 80);
+    // Brighter blur orbs
+    drawGlowOrb(ctx, 180, 160, 100, 'rgba(99,102,241,0.25)', 60);
+    drawGlowOrb(ctx, 1020, 460, 120, 'rgba(236,72,153,0.20)', 60);
     
-    // Glass card
-    const cardX = 80;
-    const cardY = 80;
-    const cardW = CANVAS_W - 160;
-    const cardH = CANVAS_H - 160;
-    drawGlassCard(ctx, cardX, cardY, cardW, cardH, 16);
+    // Glass card with blue tint
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = 48;
+    ctx.shadowOffsetY = 16;
+    ctx.fillStyle = 'rgba(248,250,252,0.92)';
+    roundRectPath(ctx, 80, 80, CANVAS_W - 160, CANVAS_H - 160, 16);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = 'rgba(99,102,241,0.25)';
+    ctx.lineWidth = 2;
+    roundRectPath(ctx, 80, 80, CANVAS_W - 160, CANVAS_H - 160, 16);
+    ctx.stroke();
+    ctx.restore();
     
     // Content inside card
-    const padX = cardX + 60;
-    const padY = cardY + 50;
+    const padX = 140;
+    const padY = 130;
     
     // Emoji
     if (data.emoji) {
@@ -162,17 +170,17 @@ function drawMinimal(ctx, data) {
     // Title
     ctx.fillStyle = '#171717';
     ctx.font = 'bold 52px Inter, sans-serif';
-    wrapText(ctx, data.title || 'Title', padX, padY + 120, cardW - 120, 64);
+    wrapText(ctx, data.title || 'Title', padX, padY + 120, CANVAS_W - 280, 64);
     
     // Description
     ctx.fillStyle = '#525252';
     ctx.font = '28px Inter, sans-serif';
-    wrapText(ctx, data.description || '', padX, padY + 220, cardW - 120, 40);
+    wrapText(ctx, data.description || '', padX, padY + 220, CANVAS_W - 280, 40);
     
     // Author
     ctx.fillStyle = '#a3a3a3';
     ctx.font = '20px Inter, sans-serif';
-    ctx.fillText(data.author || '', padX, cardY + cardH - 50);
+    ctx.fillText(data.author || '', padX, CANVAS_H - 130);
 }
 
 // ═══════════════════════════════════════════════════════════
