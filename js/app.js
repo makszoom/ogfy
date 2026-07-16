@@ -63,14 +63,8 @@
         return 'minimal';
     }
     
-    // Генерация preview
-    async function generatePreview() {
-        // Проверка лимита
-        if (usedGenerations >= 5 && !isPro()) {
-            showPaywall();
-            return;
-        }
-        
+    // === РЕНДЕР (без траты лимита) ===
+    async function renderPreview() {
         // Собираем данные
         currentData = collectData();
         currentTemplate = getSelectedTemplate();
@@ -94,11 +88,6 @@
         // Активировать download
         els.downloadBtn.disabled = false;
         
-        // Увеличить счётчик
-        usedGenerations++;
-        localStorage.setItem('og_generations', usedGenerations.toString());
-        updateCounter();
-        
         // Анимация
         els.previewCanvas.style.opacity = '0';
         els.previewCanvas.style.transform = 'translateY(8px)';
@@ -107,6 +96,23 @@
             els.previewCanvas.style.opacity = '1';
             els.previewCanvas.style.transform = 'translateY(0)';
         });
+    }
+    
+    // === ГЕНЕРАЦИЯ (с тратой лимита) ===
+    async function generatePreview() {
+        // Проверка лимита
+        if (usedGenerations >= 5 && !isPro()) {
+            showPaywall();
+            return;
+        }
+        
+        // Рендерим
+        await renderPreview();
+        
+        // Увеличить счётчик ТОЛЬКО здесь
+        usedGenerations++;
+        localStorage.setItem('og_generations', usedGenerations.toString());
+        updateCounter();
     }
     
     // Скачивание
@@ -153,15 +159,12 @@
     els.generateBtn.addEventListener('click', generatePreview);
     els.downloadBtn.addEventListener('click', download);
     
-    // Обновление preview в реальном времени (опционально)
-    // els.title.addEventListener('input', debounce(generatePreview, 500));
-    
-    // Template selector
+    // Template selector — только рендер, без лимита
     els.templateInputs.forEach(input => {
         input.addEventListener('change', () => {
             currentTemplate = input.value;
             if (!els.downloadBtn.disabled) {
-                generatePreview();
+                renderPreview();
             }
         });
     });
@@ -182,6 +185,7 @@
     // Экспорт для отладки
     window.OGApp = {
         generate: generatePreview,
+        render: renderPreview,
         download: download,
         getData: () => currentData,
         getUsed: () => usedGenerations
