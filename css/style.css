@@ -245,6 +245,49 @@ body {
     background: rgba(99,102,241,0.05);
 }
 
+/* Template Hint */
+.template-hint {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--color-secondary);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    min-height: 20px;
+}
+
+.template-hint strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+/* Field Groups (emoji/bgColor/bgImage) */
+.field-group {
+    transition: opacity 0.3s ease;
+}
+
+.field-group.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.field-group.disabled label {
+    position: relative;
+}
+
+.field-group.disabled label::after {
+    content: " (ignored)";
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.field-group.disabled input {
+    cursor: not-allowed;
+}
+
 .minimal-preview { background: #fff; color: #171717; }
 .gradient-preview { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
 .dark-preview { background: #171717; color: white; }
