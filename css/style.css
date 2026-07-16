@@ -65,6 +65,77 @@ body {
 
 .nav a:hover { color: var(--color-text); }
 
+/* Burger Button */
+.burger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: var(--color-text);
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    max-width: 80vw;
+    height: 100vh;
+    background: var(--color-bg);
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.mobile-nav.open {
+    transform: translateX(0);
+}
+
+.mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.mobile-nav-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.mobile-nav-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: 4px;
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+}
+
+.mobile-nav-links a {
+    padding: 14px 24px;
+    font-size: 15px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.mobile-nav-links a:hover {
+    background: var(--color-secondary);
+}
+
 /* Hero */
 .hero {
     text-align: center;
@@ -92,11 +163,6 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     padding: 40px 0;
-}
-
-@media (max-width: 768px) {
-    .generator-layout { grid-template-columns: 1fr; gap: 24px; }
-    .hero h1 { font-size: 36px; }
 }
 
 /* Input Section */
@@ -168,6 +234,10 @@ body {
     border-radius: var(--radius-md);
     border: 2px solid var(--color-border-light);
     transition: all 0.2s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .template-option input:checked + .template-preview {
@@ -320,10 +390,6 @@ body {
     margin-bottom: 24px;
 }
 
-@media (max-width: 600px) {
-    .pricing-cards { grid-template-columns: 1fr; }
-}
-
 .pricing-card {
     border: 1px solid var(--color-border-light);
     border-radius: var(--radius-lg);
@@ -401,14 +467,6 @@ body {
     gap: 24px;
 }
 
-@media (max-width: 768px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 480px) {
-    .features-grid { grid-template-columns: 1fr; }
-}
-
 .feature {
     padding: 24px;
 }
@@ -450,3 +508,93 @@ body {
 }
 
 .footer a:hover { color: var(--color-text); }
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .burger-btn {
+        display: block;
+    }
+    
+    .nav {
+        display: none;
+    }
+    
+    .header {
+        flex-direction: row;
+    }
+    
+    .hero h1 {
+        font-size: 36px;
+    }
+    
+    .subtitle {
+        font-size: 16px;
+    }
+    
+    .generator-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 24px 0;
+    }
+    
+    .template-selector {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .template-preview {
+        padding: 10px 6px;
+        font-size: 11px;
+        min-height: 44px;
+    }
+    
+    .preview-wrapper {
+        padding: 12px;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .pricing-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 0 16px;
+    }
+    
+    .hero {
+        padding: 40px 0 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero h1 {
+        font-size: 28px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .footer-links {
+        gap: 4px 12px;
+    }
+    
+    .footer-links a {
+        margin: 0;
+    }
+}
