@@ -394,3 +394,6 @@ const TEMPLATES = {
     event: drawEvent,
     quote: drawQuote
 };
+
+// Делаем глобальным для renderer.js
+window.TEMPLATES = TEMPLATES;
