@@ -56,17 +56,17 @@ function drawFallbackIcon(ctx, text, x, y, size, color = '#6366f1') {
 function drawGlassCard(ctx, x, y, w, h, r) {
     ctx.save();
     // Shadow
-    ctx.shadowColor = 'rgba(0,0,0,0.08)';
-    ctx.shadowBlur = 32;
-    ctx.shadowOffsetY = 8;
+    ctx.shadowColor = 'rgba(0,0,0,0.12)';
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetY = 12;
     // Fill
-    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
     roundRectPath(ctx, x, y, w, h, r);
     ctx.fill();
     // Border
     ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+    ctx.lineWidth = 1.5;
     roundRectPath(ctx, x, y, w, h, r);
     ctx.stroke();
     ctx.restore();
