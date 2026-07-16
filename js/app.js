@@ -58,6 +58,65 @@
         };
     }
     
+    // ═══════════════════════════════════════════════════════════
+    // FEATURES MAP — какие поля работают в каком шаблоне
+    // ═══════════════════════════════════════════════════════════
+    const TEMPLATE_FEATURES = {
+        minimal:  { emoji: true, bgColor: true, bgImage: false },
+        gradient: { emoji: false, bgColor: false, bgImage: false },
+        dark:     { emoji: false, bgColor: false, bgImage: false },
+        code:     { emoji: false, bgColor: false, bgImage: false },
+        news:     { emoji: true, bgColor: true, bgImage: false },
+        product:  { emoji: false, bgColor: false, bgImage: false },
+        photo:    { emoji: false, bgColor: true, bgImage: true },
+        brand:    { emoji: true, bgColor: true, bgImage: false },
+        event:    { emoji: false, bgColor: false, bgImage: false },
+        quote:    { emoji: false, bgColor: true, bgImage: false }
+    };
+    
+    const TEMPLATE_HINTS = {
+        minimal:  '<strong>Minimal</strong>: Glass card style. Background Color works.',
+        gradient: '<strong>Gradient</strong>: Mesh glow style. Fixed dark background.',
+        dark:     '<strong>Dark</strong>: Neon glow style. Fixed black background.',
+        code:     '<strong>Code</strong>: Matrix rain style. Fixed terminal background.',
+        news:     '<strong>News</strong>: Magazine split. Background Color works.',
+        product:  '<strong>Product</strong>: 3D floating card. Fixed blue background.',
+        photo:    '<strong>Photo</strong>: Cinematic letterbox. Background Image works, Color is fallback.',
+        brand:    '<strong>Brand</strong>: Circular hero. Background Color works.',
+        event:    '<strong>Event</strong>: Countdown poster. Fixed purple background.',
+        quote:    '<strong>Quote</strong>: Editorial style. Background Color works.'
+    };
+    
+    // DOM элементы для field groups
+    const templateHintEl = document.getElementById('template-hint');
+    const fieldGroups = document.querySelectorAll('.field-group');
+    
+    // Обновить подсказку под селектором шаблонов
+    function updateTemplateHint() {
+        const template = getSelectedTemplate();
+        if (templateHintEl && TEMPLATE_HINTS[template]) {
+            templateHintEl.innerHTML = TEMPLATE_HINTS[template];
+        }
+    }
+    
+    // Обновить disabled состояние полей
+    function updateFieldGroups() {
+        const template = getSelectedTemplate();
+        const features = TEMPLATE_FEATURES[template] || {};
+        
+        fieldGroups.forEach(group => {
+            const field = group.dataset.field;
+            if (!field) return;
+            
+            const works = features[field] || false;
+            if (works) {
+                group.classList.remove('disabled');
+            } else {
+                group.classList.add('disabled');
+            }
+        });
+    }
+    
     // Получить выбранный шаблон
     function getSelectedTemplate() {
         for (const input of els.templateInputs) {
@@ -207,13 +266,17 @@
     els.templateInputs.forEach(input => {
         input.addEventListener('change', () => {
             currentTemplate = input.value;
+            updateTemplateHint();
+            updateFieldGroups();
             if (!els.downloadBtn.disabled) {
                 renderPreview();
             }
         });
     });
     
-    // Инициализация
+    // Инициализация хинта и field groups при загрузке
+    updateTemplateHint();
+    updateFieldGroups();
     updateCounter();
     checkPaymentReturn();
     
