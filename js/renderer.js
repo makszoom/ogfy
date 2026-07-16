@@ -34,6 +34,14 @@ async function renderTemplate(canvas, templateId, data) {
     // Очистка
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Определяем логический размер
+    const isPreview = canvas.width === PREVIEW_W && canvas.height === PREVIEW_H;
+    
+    // Для preview масштабируем в 0.5 (шаблоны рисуют для 1200×630)
+    if (isPreview) {
+        ctx.scale(0.5, 0.5);
+    }
+    
     // Получаем функцию шаблона
     const templateFn = window.TEMPLATES?.[templateId] || window.TEMPLATES?.minimal;
     
@@ -45,9 +53,9 @@ async function renderTemplate(canvas, templateId, data) {
     // Рисуем
     templateFn(ctx, data);
     
-    // Watermark (если не Pro)
+    // Watermark (если не Pro) — в логических координатах 1200×630
     if (!isPro()) {
-        drawWatermark(ctx, canvas.width, canvas.height);
+        drawWatermark(ctx, OUTPUT_W, OUTPUT_H);
     }
 }
 
