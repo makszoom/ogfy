@@ -31,16 +31,8 @@
     
     // Инициализация счётчика
     function updateCounter() {
-        const remaining = Math.max(0, 5 - usedGenerations);
         els.freeCount.textContent = `${usedGenerations} / 5`;
-        
-        // Прогресс-бар визуально
-        const progress = (usedGenerations / 5) * 100;
-        els.freeCount.style.setProperty('--progress', `${progress}%`);
-        
-        if (remaining <= 0) {
-            showPaywall();
-        }
+        // НЕ вызываем showPaywall() здесь — только при клике Generate
     }
     
     // Показать пейволл
