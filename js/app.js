@@ -35,11 +35,9 @@
         // НЕ вызываем showPaywall() здесь — только при клике Generate
     }
     
-    // Показать пейволл
+    // Показать пейволл — теперь модалка оплаты
     function showPaywall() {
-        els.generatorLayout.style.display = 'none';
-        els.counter.style.display = 'none';
-        els.paywall.style.display = 'block';
+        showPaymentModal();
     }
     
     // Собрать данные из формы
