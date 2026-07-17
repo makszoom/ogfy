@@ -242,7 +242,26 @@ body {
 
 .template-option input:checked + .template-preview {
     border-color: var(--color-accent);
-    background: rgba(99,102,241,0.05);
+}
+
+/* Checked светлые кнопки */
+.template-option input:checked + .template-preview.minimal-preview,
+.template-option input:checked + .template-preview.news-preview,
+.template-option input:checked + .template-preview.brand-preview,
+.template-option input:checked + .template-preview.quote-preview {
+    background: rgba(99,102,241,0.08);
+    color: #171717;
+}
+
+/* Checked тёмные кнопки — остаются тёмными */
+.template-option input:checked + .template-preview.gradient-preview,
+.template-option input:checked + .template-preview.dark-preview,
+.template-option input:checked + .template-preview.code-preview,
+.template-option input:checked + .template-preview.product-preview,
+.template-option input:checked + .template-preview.photo-preview,
+.template-option input:checked + .template-preview.event-preview {
+    background: #171717;
+    color: #ffffff;
 }
 
 /* Template Hint */
