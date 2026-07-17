@@ -43,6 +43,15 @@ function showPaymentModal() {
                     <span class="currency">USDT ${PAYMENT_CONFIG.NETWORK}</span>
                 </div>
                 
+                <div class="qr-section">
+                    <h3>📱 Scan QR Code</h3>
+                    <div class="qr-card">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=tron:${PAYMENT_CONFIG.TARGET_ADDRESS}?amount=5" alt="Payment QR" class="payment-qr" id="payment-qr">
+                        <p class="qr-hint">Scan with TronLink, Trust Wallet, or Bybit</p>
+                        <a href="#" class="qr-download" onclick="downloadQR()">Download QR</a>
+                    </div>
+                </div>
+                
                 <div class="payment-steps">
                     <h3>How to pay:</h3>
                     <ol>
@@ -78,6 +87,20 @@ function closePaymentModal() {
         modal.remove();
         document.body.style.overflow = '';
     }
+}
+
+// ═══════════════════════════════════════════════════════════
+// QR CODE DOWNLOAD
+// ═══════════════════════════════════════════════════════════
+
+function downloadQR() {
+    const qrImg = document.getElementById('payment-qr');
+    if (!qrImg) return;
+    
+    const link = document.createElement('a');
+    link.href = qrImg.src;
+    link.download = 'ogfy-payment-qr.png';
+    link.click();
 }
 
 // ═══════════════════════════════════════════════════════════
