@@ -7,7 +7,7 @@
 const PAYMENT_CONFIG = {
     // CLOUDFLARE WORKER URL — заменить после деплоя
     // Если не настроен — verify покажет инструкцию вручную
-    WORKER_URL: 'https://ogfy-payment.YOUR-SUBDOMAIN.workers.dev',
+    WORKER_URL: 'https://ogfy-payment.makszoom85.workers.dev',
     
     // Твой TRC-20 адрес для отображения пользователю
     TARGET_ADDRESS: 'TLdbF5RTXHTax71H9cAeU573pXxtMPZUuw',
