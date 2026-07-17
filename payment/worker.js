@@ -135,6 +135,24 @@ export default {
     const rateCount = rateData ? JSON.parse(rateData).count + 1 : 1;
     await env.PAYMENT_KV?.put(key, JSON.stringify({ count: rateCount, windowStart: rateWindow }), { expirationTtl: 60 });
 
+    // ═══════ TELEGRAM NOTIFICATION ═══════
+    await sendTelegramMessage(env, {
+      verified: true,
+      amount: amountUSDT,
+      txId: txId,
+      recipient: recipient,
+      timestamp: new Date().toISOString()
+    });
+
+    // ═══════ LOG TO KV ═══════
+    await logPayment(env, {
+      txId: txId,
+      amount: amountUSDT,
+      recipient: recipient,
+      timestamp: now,
+      clientIP: clientIP
+    });
+
     // ═══════ SUCCESS ═══════
     return jsonResponse({
       verified: true,
@@ -144,6 +162,63 @@ export default {
     }, 200, corsHeaders);
   }
 };
+
+async function sendTelegramMessage(env, data) {
+  const BOT_TOKEN = env.BOT_TOKEN;
+  const CHAT_ID = env.CHAT_ID;
+  
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  
+  const txIdShort = data.txId.substring(0, 8) + '...' + data.txId.substring(60);
+  const amount = data.amount.toFixed(2);
+  const date = new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' });
+  
+  const text = `🎉 *OGfy — NEW PAYMENT!*
+
+💰 *Amount:* ${amount} USDT
+🔗 *TXID:* \`${txIdShort}\`
+📅 *Date:* ${date} MSK
+📬 *Recipient:* \`${data.recipient?.substring(0, 12)}...\`
+✅ *Status:* Verified
+
+💵 *All time:* ${amount} USDT received`;
+  
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: text,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: true
+      })
+    });
+  } catch (e) {
+    // Silently fail — payment still works
+    console.error('Telegram notification failed:', e);
+  }
+}
+
+async function logPayment(env, data) {
+  if (!env.PAYMENT_KV) return;
+  
+  // Store payment log with date prefix for easy listing
+  const date = new Date(data.timestamp).toISOString().split('T')[0]; // YYYY-MM-DD
+  const logKey = `payment:${date}:${data.txId}`;
+  
+  await env.PAYMENT_KV.put(logKey, JSON.stringify(data), {
+    expirationTtl: 90 * 24 * 60 * 60 // Keep for 90 days
+  });
+  
+  // Update daily counter
+  const counterKey = `daily:${date}`;
+  const current = await env.PAYMENT_KV.get(counterKey);
+  const count = current ? parseInt(current) + 1 : 1;
+  await env.PAYMENT_KV.put(counterKey, count.toString(), {
+    expirationTtl: 90 * 24 * 60 * 60
+  });
+}
 
 function jsonResponse(data, status, extraHeaders) {
   return new Response(JSON.stringify(data), {
