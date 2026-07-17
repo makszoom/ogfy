@@ -625,6 +625,63 @@ body {
     color: var(--color-text-muted);
 }
 
+/* QR Code Section */
+.qr-section {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.qr-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--color-text);
+}
+
+.qr-card {
+    background: #ffffff;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: inline-block;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.qr-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.payment-qr {
+    display: block;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 8px;
+    border-radius: var(--radius-md);
+}
+
+.qr-hint {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.qr-download {
+    font-size: 12px;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.qr-download:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
 .payment-steps h3 {
     font-size: 14px;
     font-weight: 600;
